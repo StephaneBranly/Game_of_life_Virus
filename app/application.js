@@ -13,10 +13,10 @@ function createGeneration(width, height) {
 function draw(context2d, generation, totalGeneration) {
   var height = generation.length;
   var width = generation[0].length;
-  var scale = 4;
+  var scale = 2;
 
   console.log(totalGeneration);
-
+  document.getElementById("generation_id").innerHTML = totalGeneration;
   clearBackground(context2d, width, height, scale);
   drawCells(context2d, generation, width, height, scale);
 
@@ -27,13 +27,16 @@ function draw(context2d, generation, totalGeneration) {
 function clearBackground(context2d, width, height, scale) {
   context2d.fillStyle = "black";
   context2d.fillRect(0, 0, width * scale, height * scale);
+  context2d.fillStyle = "red";
+
+  context2d.fillRect(0, 0, 4, 4);
 }
 
 function drawCells(context2d, generation, width, height, scale) {
   context2d.fillStyle = "white";
   for (var y = 0; y < height; y++) {
     for (var x = 0; x < width; x++) {
-      if (generation[x][y] === 1) {
+      if (generation[y][x] === 1) {
         context2d.fillRect(x * scale, y * scale, scale, scale);
       }
     }
@@ -108,7 +111,7 @@ function update(ctx, generation, totalGeneration) {
 }
 
 (function() {
-  var generation = createGeneration(100, 100);
+  var generation = createGeneration(400, 200);
   var c = document.getElementById("canvas");
   var ctx = c.getContext("2d");
   var totalGeneration = 100;

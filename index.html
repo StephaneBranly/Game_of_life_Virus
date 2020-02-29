@@ -1,11 +1,21 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <link
+      href="./ressources/style.css"
+      rel="stylesheet"
+      media="all"
+      type="text/css"
+    />
     <meta charset="utf-8" />
     <title>Game of Life</title>
   </head>
   <body>
-    <canvas width="400" height="400" id="canvas"></canvas>
+    <h1>Game of life, virus simulation</h1>
+    <div>
+      <h3>Generation <span id="generation_id"></span></h3>
+    </div>
+    <canvas width="800" height="400" id="canvas"></canvas>
     <script src="app/application.js"></script>
   </body>
 </html>
