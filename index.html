@@ -13,12 +13,18 @@
   <body>
     <h1>Game of life, virus simulation</h1>
     <div>
-      <h3>Generation <span id="generation_id"></span></h3>
+      <h3>Day <span id="generation_id"></span></h3>
     </div>
-    <div><canvas width="1282" height="641" id="canvas"></canvas></div>
+    <div>
+      <p>Cursor coord: <span id="x_coord"></span>,<span id="y_coord"></span></p>
+      <button onclick="stop_game()">STOP</button>
+      <button onclick="play_game()">PLAY</button>
+    </div>
+    <div>
+      <canvas width="1282" height="641" id="canvas"></canvas>
+    </div>
 
     <div><canvas width="1282" height="641" id="canvas_terrain"></canvas></div>
-    <div id='data_plan'></idv>
     <script src="app/application.js"></script>
   </body>
 </html>

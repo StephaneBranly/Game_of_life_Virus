@@ -1,17 +1,27 @@
 function createGeneration(width, height) {
   var generation = new Array(height);
   var planisphere = calculatePlanisphere();
-  document.getElementById("data_plan").innerHTML = planisphere;
   for (var y = 0; y < height; y++) {
     generation[y] = [];
     for (var x = 0; x < width; x++) {
       if (planisphere[(x + y * 1282) * 4 + 1] == 255) {
-        generation[y][x] = Math.floor(Math.random() * 2);
+        generation[y][x] = 0;
+        //generation[y][x] = Math.floor(Math.random() * 2);
       } else {
         generation[y][x] = -1;
       }
     }
   }
+  generation[301][947] = 1;
+  generation[300][947] = 1;
+  generation[302][947] = 1;
+  generation[298][947] = 1;
+  generation[298][945] = 1;
+  generation[300][945] = 1;
+  generation[302][945] = 1;
+  generation[300][944] = 1;
+  generation[300][943] = 1;
+
   return generation;
 }
 
@@ -23,18 +33,18 @@ function calculatePlanisphere() {
   return planisphere;
 }
 
-function draw(context2d, generation, totalGeneration) {
+function draw(context2d, generation, generationDate) {
   var height = generation.length;
   var width = generation[0].length;
   var scale = 1;
 
-  console.log(totalGeneration);
-  document.getElementById("generation_id").innerHTML = totalGeneration;
+  document.getElementById("generation_id").innerHTML = generationDate;
   clearBackground(context2d, width, height, scale);
   drawCells(context2d, generation, width, height, scale);
 
-  if (totalGeneration > 0)
-    setTimeout(update, 200, context2d, generation, totalGeneration);
+  if (play == true)
+    setTimeout(update, 50, context2d, generation, generationDate);
+  return generation;
 }
 
 function clearBackground(context2d, width, height, scale) {
@@ -43,12 +53,6 @@ function clearBackground(context2d, width, height, scale) {
   context2d.fillStyle = "red";
 
   context2d.fillRect(0, 0, 4, 4);
-}
-
-function drawPlanisphere(context2d, width, height, scale) {
-  for (var y = 0; y < height; y++) {
-    for (var x = 0; x < width; x++) {}
-  }
 }
 
 function drawCells(context2d, generation, width, height, scale) {
@@ -76,7 +80,7 @@ function nextCellState(neighborhood) {
     return a + b;
   }, 0);
 
-  if (result === 3) return 1;
+  if (result === 2) return 1;
   else if (result === 4) return neighborhood[4];
   else return 0;
 }
@@ -116,7 +120,7 @@ function extractLine(line, x) {
   return [line[left], line[x], line[right]];
 }
 
-function update(ctx, generation, totalGeneration) {
+function update(ctx, generation, generationDate) {
   var height = generation.length,
     width = generation[0].length;
 
@@ -139,23 +143,49 @@ function update(ctx, generation, totalGeneration) {
     }
   }
 
-  setTimeout(draw, 200, ctx, nextGeneration, totalGeneration - 1);
+  setTimeout(draw, 50, ctx, nextGeneration, generationDate - 1);
 }
 
-(function() {
-  var img = new Image();
-  img.crossOrigin = "anonymous";
-  img.src = "./ressources/planisphere_terrain.png";
-  var canvas_terrain = document.getElementById("canvas_terrain");
-  var ctx_terrain = canvas_terrain.getContext("2d");
-  img.onload = function() {
-    ctx_terrain.drawImage(img, 0, 0);
-
-    var generation = createGeneration(1282, 641);
-    var c = document.getElementById("canvas");
-    var ctx = c.getContext("2d");
-    var totalGeneration = 50;
-
-    draw(ctx, generation, totalGeneration);
+function getMousePos(canvas, evt) {
+  var rect = canvas.getBoundingClientRect();
+  return {
+    x: evt.clientX - rect.left,
+    y: evt.clientY - rect.top
   };
-})();
+}
+
+function stop_game() {
+  play = false;
+}
+function play_game() {
+  if (play == false) {
+    play = true;
+    generation = draw(ctx, generation, generationDate);
+  }
+}
+
+var generationDate = 20200229;
+var play = true;
+var img = new Image();
+img.crossOrigin = "anonymous";
+img.src = "./ressources/planisphere_terrain.png";
+var canvas_terrain = document.getElementById("canvas_terrain");
+var ctx_terrain = canvas_terrain.getContext("2d");
+var c = document.getElementById("canvas");
+var ctx = c.getContext("2d");
+var generation;
+
+img.onload = function() {
+  ctx_terrain.drawImage(img, 0, 0);
+  generation = createGeneration(1282, 641);
+  c.addEventListener(
+    "mousemove",
+    function(evt) {
+      var mousePos = getMousePos(canvas, evt);
+      document.getElementById("x_coord").innerHTML = Math.floor(mousePos.x);
+      document.getElementById("y_coord").innerHTML = Math.floor(mousePos.y);
+    },
+    false
+  );
+  generation = draw(ctx, generation, generationDate);
+};
