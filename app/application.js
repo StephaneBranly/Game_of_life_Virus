@@ -6,9 +6,9 @@ function createGeneration(width, height) {
     generation[y] = [];
     for (var x = 0; x < width; x++) {
       if (planisphere[(x + y * 1282) * 4 + 1] == 255) {
-        generation[y][x] = Math.floor(Math.random() * 2 + 1);
+        generation[y][x] = Math.floor(Math.random() * 2);
       } else {
-        generation[y][x] = 0;
+        generation[y][x] = -1;
       }
     }
   }
@@ -46,13 +46,8 @@ function clearBackground(context2d, width, height, scale) {
 }
 
 function drawPlanisphere(context2d, width, height, scale) {
-  context2d.fillStyle = "green";
   for (var y = 0; y < height; y++) {
-    for (var x = 0; x < width; x++) {
-      if (generation[y][x] === 1) {
-        context2d.fillRect(x * scale, y * scale, scale, scale);
-      }
-    }
+    for (var x = 0; x < width; x++) {}
   }
 }
 
@@ -60,8 +55,17 @@ function drawCells(context2d, generation, width, height, scale) {
   context2d.fillStyle = "white";
   for (var y = 0; y < height; y++) {
     for (var x = 0; x < width; x++) {
-      if (generation[y][x] === 1) {
-        context2d.fillRect(x * scale, y * scale, scale, scale);
+      switch (generation[y][x]) {
+        case 0:
+          context2d.fillStyle = "rgb(0, 233, 0)";
+          context2d.fillRect(x * scale, y * scale, scale, scale);
+          break;
+        case 1:
+          context2d.fillStyle = "red";
+          context2d.fillRect(x * scale, y * scale, scale, scale);
+          break;
+        default:
+          break;
       }
     }
   }
@@ -125,9 +129,13 @@ function update(ctx, generation, totalGeneration) {
   // Fill the next generation.
   for (var y = 0; y < height; y++) {
     for (var x = 0; x < width; x++) {
-      var neighborhood = extractNeighborhood(generation, x, y);
-      var state = nextCellState(neighborhood);
-      nextGeneration[y][x] = state;
+      if (generation[y][x] === -1) {
+        nextGeneration[y][x] = -1;
+      } else {
+        var neighborhood = extractNeighborhood(generation, x, y);
+        var state = nextCellState(neighborhood);
+        nextGeneration[y][x] = state;
+      }
     }
   }
 
@@ -146,7 +154,7 @@ function update(ctx, generation, totalGeneration) {
     var generation = createGeneration(1282, 641);
     var c = document.getElementById("canvas");
     var ctx = c.getContext("2d");
-    var totalGeneration = 0;
+    var totalGeneration = 50;
 
     draw(ctx, generation, totalGeneration);
   };
