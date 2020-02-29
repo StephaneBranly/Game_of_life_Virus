@@ -1,12 +1,12 @@
 function createGeneration(width, height) {
   var generation = new Array(height);
-  var planisphere = calculatePlanisphere(width, height);
-  alert("Fin de calcul planisphere");
+  var planisphere = calculatePlanisphere();
+  document.getElementById("data_plan").innerHTML = planisphere;
   for (var y = 0; y < height; y++) {
     generation[y] = [];
     for (var x = 0; x < width; x++) {
-      if (planisphere[y][x] == 1) {
-        generation[y][x] = Math.floor(Math.random() * 2);
+      if (planisphere[(x + y * 1282) * 4 + 1] == 255) {
+        generation[y][x] = Math.floor(Math.random() * 2 + 1);
       } else {
         generation[y][x] = 0;
       }
@@ -15,23 +15,11 @@ function createGeneration(width, height) {
   return generation;
 }
 
-function calculatePlanisphere(width, height) {
-  alert("Calcul planisphere");
-  alert("Green pixel");
-  var planisphere = new Array(height);
+function calculatePlanisphere() {
+  var planisphere = new Array();
   var canvas_terrain = document.getElementById("canvas_terrain");
   var ctx_terrain = canvas_terrain.getContext("2d");
-  for (var y = 0; y < height; y++) {
-    planisphere[y] = [];
-    for (var x = 0; x < width; x++) {
-      if (ctx_terrain.getImageData(x, y, 1, 1).data[1] == 255) {
-        planisphere[y][x] = 1;
-      } else {
-        planisphere[y][x] = 0;
-      }
-    }
-  }
-
+  planisphere = ctx_terrain.getImageData(0, 0, 1282, 641).data;
   return planisphere;
 }
 
@@ -50,7 +38,7 @@ function draw(context2d, generation, totalGeneration) {
 }
 
 function clearBackground(context2d, width, height, scale) {
-  context2d.fillStyle = "black";
+  context2d.fillStyle = "blue";
   context2d.fillRect(0, 0, width * scale, height * scale);
   context2d.fillStyle = "red";
 
