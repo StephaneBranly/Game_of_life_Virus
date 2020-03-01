@@ -180,11 +180,20 @@ function next_game() {
   }
 }
 
+function change_color() {
+  color =
+    "rgb(" +
+    document.getElementById("state_color_contamination").value +
+    ",0," +
+    document.getElementById("state_color_dead").value +
+    ")";
+  document.getElementById("state_color_visu").style.background = color;
+}
+
 var generationDate = 20200229;
 var play = false;
 
 function createCell(x, y) {
-  generation[y][x] = 1;
   generation[y][x + 1] = 1;
   generation[y][x - 1] = 1;
 

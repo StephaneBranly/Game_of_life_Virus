@@ -23,6 +23,27 @@
         ></span>
       </p>
       <p>Cell state: <span id="cell_state"></span></p>
+      <p id="state_color_visu">
+        COLOR
+        <input
+          type="range"
+          id="state_color_contamination"
+          value="15"
+          max="255"
+          min="0"
+          step="1"
+        />
+        <input
+          type="range"
+          id="state_color_dead"
+          value="15"
+          max="255"
+          min="0"
+          step="1"
+        />
+
+        <button onclick="change_color()">Change color</button>
+      </p>
       <button onclick="stop_game()">STOP</button>
       <button onclick="play_game()">PLAY</button>
       <button onclick="next_game()">NEXT</button>
