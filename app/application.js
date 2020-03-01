@@ -1,31 +1,57 @@
 function createGeneration(width, height) {
   var generation = new Array(height);
-
+  var planisphere = calculatePlanisphere();
   for (var y = 0; y < height; y++) {
     generation[y] = [];
     for (var x = 0; x < width; x++) {
-      generation[y][x] = Math.floor(Math.random() * 2);
+      if (
+        planisphere[(x + y * 2161) * 4 + 0] < 50 &&
+        planisphere[(x + y * 2161) * 4 + 1] < 50 &&
+        planisphere[(x + y * 2161) * 4 + 2] < 50
+      ) {
+        generation[y][x] = -1;
+        //generation[y][x] = Math.floor(Math.random() * 2);
+      } else {
+        generation[y][x] = 0;
+      }
     }
   }
+  /* generation[301][947] = 1;
+  generation[300][947] = 1;
+  generation[302][947] = 1;
+  generation[298][947] = 1;
+  generation[298][945] = 1;
+  generation[300][945] = 1;
+  generation[302][945] = 1;
+  generation[300][944] = 1;
+  generation[300][943] = 1;
+*/
   return generation;
 }
 
-function draw(context2d, generation, totalGeneration) {
+function calculatePlanisphere() {
+  var planisphere = new Array();
+  var canvas_terrain = document.getElementById("canvas_terrain");
+  var ctx_terrain = canvas_terrain.getContext("2d");
+  planisphere = ctx_terrain.getImageData(0, 0, 2161, 1038).data;
+  return planisphere;
+}
+
+function draw(context2d, generation, generationD) {
   var height = generation.length;
   var width = generation[0].length;
-  var scale = 4;
+  var scale = 1;
 
-  console.log(totalGeneration);
-
+  document.getElementById("generation_id").innerHTML = generationD;
   clearBackground(context2d, width, height, scale);
   drawCells(context2d, generation, width, height, scale);
-
-  if (totalGeneration > 0)
-    setTimeout(update, 200, context2d, generation, totalGeneration);
+  generationDate = generationD;
+  if (play == true) setTimeout(update, 50, context2d, generation, generationD);
+  return generation;
 }
 
 function clearBackground(context2d, width, height, scale) {
-  context2d.fillStyle = "black";
+  context2d.fillStyle = "rgb(50, 50, 250)";
   context2d.fillRect(0, 0, width * scale, height * scale);
 }
 
@@ -33,8 +59,17 @@ function drawCells(context2d, generation, width, height, scale) {
   context2d.fillStyle = "white";
   for (var y = 0; y < height; y++) {
     for (var x = 0; x < width; x++) {
-      if (generation[x][y] === 1) {
-        context2d.fillRect(x * scale, y * scale, scale, scale);
+      switch (generation[y][x]) {
+        case 0:
+          context2d.fillStyle = "rgb(10, 230, 30)";
+          context2d.fillRect(x * scale, y * scale, scale, scale);
+          break;
+        case 1:
+          context2d.fillStyle = "red";
+          context2d.fillRect(x * scale, y * scale, scale, scale);
+          break;
+        default:
+          break;
       }
     }
   }
@@ -45,7 +80,7 @@ function nextCellState(neighborhood) {
     return a + b;
   }, 0);
 
-  if (result === 3) return 1;
+  if (result === 2) return 1;
   else if (result === 4) return neighborhood[4];
   else return 0;
 }
@@ -85,7 +120,7 @@ function extractLine(line, x) {
   return [line[left], line[x], line[right]];
 }
 
-function update(ctx, generation, totalGeneration) {
+function update(ctx, generation, generationDate) {
   var height = generation.length,
     width = generation[0].length;
 
@@ -98,20 +133,77 @@ function update(ctx, generation, totalGeneration) {
   // Fill the next generation.
   for (var y = 0; y < height; y++) {
     for (var x = 0; x < width; x++) {
-      var neighborhood = extractNeighborhood(generation, x, y);
-      var state = nextCellState(neighborhood);
-      nextGeneration[y][x] = state;
+      if (generation[y][x] === -1) {
+        nextGeneration[y][x] = -1;
+      } else {
+        var neighborhood = extractNeighborhood(generation, x, y);
+        var state = nextCellState(neighborhood);
+        nextGeneration[y][x] = state;
+      }
     }
   }
 
-  setTimeout(draw, 200, ctx, nextGeneration, totalGeneration - 1);
+  setTimeout(draw, 50, ctx, nextGeneration, generationDate - 1);
 }
 
-(function() {
-  var generation = createGeneration(100, 100);
-  var c = document.getElementById("canvas");
-  var ctx = c.getContext("2d");
-  var totalGeneration = 100;
+function getMousePos(canvas, evt) {
+  var rect = canvas.getBoundingClientRect();
+  return {
+    x: evt.clientX - rect.left,
+    y: evt.clientY - rect.top
+  };
+}
 
-  draw(ctx, generation, totalGeneration);
-})();
+function stop_game() {
+  play = false;
+}
+function play_game() {
+  if (play == false) {
+    play = true;
+    generation = draw(ctx, generation, generationDate);
+  }
+}
+function next_game() {
+  if (play == false) {
+    update(ctx, generation, generationDate);
+  }
+}
+
+var generationDate = 20200229;
+var play = false;
+
+// LOAD TERRAIN
+var img_terrain = new Image();
+img_terrain.crossOrigin = "anonymous";
+img_terrain.src = "./ressources/world_terrain_30.png";
+var canvas_terrain = document.getElementById("canvas_terrain");
+var ctx_terrain = canvas_terrain.getContext("2d");
+
+// LOAD DENSITY
+var img_density = new Image();
+img_density.crossOrigin = "anonymous";
+img_density.src = "./ressources/world_density_30.png";
+var canvas_density = document.getElementById("canvas_density");
+var ctx_density = canvas_density.getContext("2d");
+
+var c = document.getElementById("canvas");
+var ctx = c.getContext("2d");
+var generation;
+
+img_terrain.onload = function() {
+  ctx_terrain.drawImage(img_terrain, 0, 0);
+  generation = createGeneration(2161, 1038);
+  c.addEventListener(
+    "mousemove",
+    function(evt) {
+      var mousePos = getMousePos(canvas, evt);
+      document.getElementById("x_coord").innerHTML = Math.floor(mousePos.x);
+      document.getElementById("y_coord").innerHTML = Math.floor(mousePos.y);
+    },
+    false
+  );
+  generation = draw(ctx, generation, generationDate);
+};
+img_density.onload = function() {
+  ctx_density.drawImage(img_density, 0, 0);
+};

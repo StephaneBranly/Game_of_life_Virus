@@ -1,11 +1,38 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <link
+      href="./ressources/style.css"
+      rel="stylesheet"
+      media="all"
+      type="text/css"
+    />
     <meta charset="utf-8" />
     <title>Game of Life</title>
   </head>
   <body>
-    <canvas width="400" height="400" id="canvas"></canvas>
+    <h1>Game of life, virus simulation</h1>
+    <div>
+      <h3>Day <span id="generation_id"></span></h3>
+    </div>
+    <div>
+      <p>Cursor coord: <span id="x_coord"></span>,<span id="y_coord"></span></p>
+      <button onclick="stop_game()">STOP</button>
+      <button onclick="play_game()">PLAY</button>
+      <button onclick="next_game()">NEXT</button>
+    </div>
+    <div>
+      <canvas width="2161" height="1038" id="canvas"></canvas>
+    </div>
+
+    <div>
+      <p>
+        Terrain<canvas width="2161" height="1038" id="canvas_terrain"></canvas>
+      </p>
+      <p>
+        Density<canvas width="2161" height="1038" id="canvas_density"></canvas>
+      </p>
+    </div>
     <script src="app/application.js"></script>
   </body>
 </html>
