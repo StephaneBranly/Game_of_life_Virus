@@ -4,15 +4,19 @@ function createGeneration(width, height) {
   for (var y = 0; y < height; y++) {
     generation[y] = [];
     for (var x = 0; x < width; x++) {
-      if (planisphere[(x + y * 1282) * 4 + 1] == 255) {
-        generation[y][x] = 0;
+      if (
+        planisphere[(x + y * 2161) * 4 + 0] < 50 &&
+        planisphere[(x + y * 2161) * 4 + 1] < 50 &&
+        planisphere[(x + y * 2161) * 4 + 2] < 50
+      ) {
+        generation[y][x] = -1;
         //generation[y][x] = Math.floor(Math.random() * 2);
       } else {
-        generation[y][x] = -1;
+        generation[y][x] = 0;
       }
     }
   }
-  generation[301][947] = 1;
+  /* generation[301][947] = 1;
   generation[300][947] = 1;
   generation[302][947] = 1;
   generation[298][947] = 1;
@@ -21,7 +25,7 @@ function createGeneration(width, height) {
   generation[302][945] = 1;
   generation[300][944] = 1;
   generation[300][943] = 1;
-
+*/
   return generation;
 }
 
@@ -29,30 +33,26 @@ function calculatePlanisphere() {
   var planisphere = new Array();
   var canvas_terrain = document.getElementById("canvas_terrain");
   var ctx_terrain = canvas_terrain.getContext("2d");
-  planisphere = ctx_terrain.getImageData(0, 0, 1282, 641).data;
+  planisphere = ctx_terrain.getImageData(0, 0, 2161, 1038).data;
   return planisphere;
 }
 
-function draw(context2d, generation, generationDate) {
+function draw(context2d, generation, generationD) {
   var height = generation.length;
   var width = generation[0].length;
   var scale = 1;
 
-  document.getElementById("generation_id").innerHTML = generationDate;
+  document.getElementById("generation_id").innerHTML = generationD;
   clearBackground(context2d, width, height, scale);
   drawCells(context2d, generation, width, height, scale);
-
-  if (play == true)
-    setTimeout(update, 50, context2d, generation, generationDate);
+  generationDate = generationD;
+  if (play == true) setTimeout(update, 50, context2d, generation, generationD);
   return generation;
 }
 
 function clearBackground(context2d, width, height, scale) {
-  context2d.fillStyle = "blue";
+  context2d.fillStyle = "rgb(50, 50, 250)";
   context2d.fillRect(0, 0, width * scale, height * scale);
-  context2d.fillStyle = "red";
-
-  context2d.fillRect(0, 0, 4, 4);
 }
 
 function drawCells(context2d, generation, width, height, scale) {
@@ -61,7 +61,7 @@ function drawCells(context2d, generation, width, height, scale) {
     for (var x = 0; x < width; x++) {
       switch (generation[y][x]) {
         case 0:
-          context2d.fillStyle = "rgb(0, 233, 0)";
+          context2d.fillStyle = "rgb(10, 230, 30)";
           context2d.fillRect(x * scale, y * scale, scale, scale);
           break;
         case 1:
@@ -163,21 +163,36 @@ function play_game() {
     generation = draw(ctx, generation, generationDate);
   }
 }
+function next_game() {
+  if (play == false) {
+    update(ctx, generation, generationDate);
+  }
+}
 
 var generationDate = 20200229;
-var play = true;
-var img = new Image();
-img.crossOrigin = "anonymous";
-img.src = "./ressources/planisphere_terrain.png";
+var play = false;
+
+// LOAD TERRAIN
+var img_terrain = new Image();
+img_terrain.crossOrigin = "anonymous";
+img_terrain.src = "./ressources/world_terrain_30.png";
 var canvas_terrain = document.getElementById("canvas_terrain");
 var ctx_terrain = canvas_terrain.getContext("2d");
+
+// LOAD DENSITY
+var img_density = new Image();
+img_density.crossOrigin = "anonymous";
+img_density.src = "./ressources/world_density_30.png";
+var canvas_density = document.getElementById("canvas_density");
+var ctx_density = canvas_density.getContext("2d");
+
 var c = document.getElementById("canvas");
 var ctx = c.getContext("2d");
 var generation;
 
-img.onload = function() {
-  ctx_terrain.drawImage(img, 0, 0);
-  generation = createGeneration(1282, 641);
+img_terrain.onload = function() {
+  ctx_terrain.drawImage(img_terrain, 0, 0);
+  generation = createGeneration(2161, 1038);
   c.addEventListener(
     "mousemove",
     function(evt) {
@@ -188,4 +203,7 @@ img.onload = function() {
     false
   );
   generation = draw(ctx, generation, generationDate);
+};
+img_density.onload = function() {
+  ctx_density.drawImage(img_density, 0, 0);
 };

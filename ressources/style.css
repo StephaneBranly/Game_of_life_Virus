@@ -12,11 +12,19 @@ div {
   background-color: rgba(0, 0, 0, 0.8);
 }
 
+div p {
+  display: inline-block;
+}
 canvas {
   border: 3px solid black;
 }
 
-#canvas_terrain {
+#canvas_terrain,
+#canvas_density {
   width: 10%;
+  height: auto;
+}
+#canvas {
+  width: 100%;
   height: auto;
 }

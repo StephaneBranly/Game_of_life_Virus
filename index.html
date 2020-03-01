@@ -19,12 +19,20 @@
       <p>Cursor coord: <span id="x_coord"></span>,<span id="y_coord"></span></p>
       <button onclick="stop_game()">STOP</button>
       <button onclick="play_game()">PLAY</button>
+      <button onclick="next_game()">NEXT</button>
     </div>
     <div>
-      <canvas width="1282" height="641" id="canvas"></canvas>
+      <canvas width="2161" height="1038" id="canvas"></canvas>
     </div>
 
-    <div><canvas width="1282" height="641" id="canvas_terrain"></canvas></div>
+    <div>
+      <p>
+        Terrain<canvas width="2161" height="1038" id="canvas_terrain"></canvas>
+      </p>
+      <p>
+        Density<canvas width="2161" height="1038" id="canvas_density"></canvas>
+      </p>
+    </div>
     <script src="app/application.js"></script>
   </body>
 </html>
