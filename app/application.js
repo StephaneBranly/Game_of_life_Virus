@@ -68,25 +68,50 @@ function drawCells(context2d, generation, width, height, scale) {
           context2d.fillStyle = color;
           context2d.fillRect(x * scale, y * scale, scale, scale);
           break;
-        case 1:
-          color = "rgb(255," + "15" + ",30)";
+        case -1:
+          break;
+        case 100:
+          color = "rgb(0," + "15" + ",255)";
+          context2d.fillStyle = color;
+          context2d.fillRect(x * scale, y * scale, scale, scale);
+          break;
+        case 666:
+          color = "rgb(255,255,255)";
           context2d.fillStyle = color;
           context2d.fillRect(x * scale, y * scale, scale, scale);
           break;
         default:
+          color = "rgb(255," + "15" + ",30)";
+          context2d.fillStyle = color;
+          context2d.fillRect(x * scale, y * scale, scale, scale);
           break;
       }
     }
   }
 }
 
-function nextCellState(neighborhood) {
-  var result = neighborhood.reduce(function(a, b) {
-    return a + b;
-  }, 0);
+function nextCellState(neighborhood, x, y) {
+  var somme = 0;
+  for (var i = 0; i < 9; i++) {
+    if (neighborhood[i] != 666 && neighborhood[i] != -1 && neighborhood[i] != 0)
+      somme += 1;
+  }
+  var propagation = ((255 - density[y][x]) * 100) / 255 + 0.1;
 
-  if (result === 2) return 1;
-  else if (result === 4) return neighborhood[4];
+  if (neighborhood[4] > 100 && neighborhood[4] < 115 && Math.random() < 0.85)
+    return neighborhood[4] - 1;
+  else if (
+    somme > 1 &&
+    Math.random() < propagation &&
+    Math.random() < 0.03 &&
+    somme < 4
+  )
+    return 666;
+  else if (
+    ((somme > 1 && somme < 3) || somme > 4) &&
+    Math.random() < propagation
+  )
+    return 114;
   else return 0;
 }
 
@@ -138,11 +163,15 @@ function update(ctx, generation, generationDate) {
   // Fill the next generation.
   for (var y = 0; y < height; y++) {
     for (var x = 0; x < width; x++) {
-      if (generation[y][x] === -1) {
-        nextGeneration[y][x] = -1;
+      if (
+        generation[y][x] === -1 ||
+        generation[y][x] === 100 ||
+        generation[y][x] === 666
+      ) {
+        nextGeneration[y][x] = generation[y][x];
       } else {
         var neighborhood = extractNeighborhood(generation, x, y);
-        var state = nextCellState(neighborhood);
+        var state = nextCellState(neighborhood, x, y);
         nextGeneration[y][x] = state;
       }
     }
