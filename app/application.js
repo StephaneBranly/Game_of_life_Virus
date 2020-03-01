@@ -172,6 +172,23 @@ function next_game() {
 var generationDate = 20200229;
 var play = false;
 
+function createCell(x, y) {
+  generation[y][x] = 1;
+  generation[y][x + 1] = 1;
+  generation[y][x + 2] = 1;
+
+  generation[y + 1][x] = 1;
+  generation[y + 1][x + 1] = 1;
+  generation[y + 1][x + 2] = 1;
+
+  generation[y + 2][x] = 1;
+  generation[y + 2][x + 1] = 1;
+  generation[y + 2][x + 2] = 1;
+  draw(ctx, generation, generationDate);
+}
+var generationDate = 20200229;
+var play = false;
+
 // LOAD TERRAIN
 var img_terrain = new Image();
 img_terrain.crossOrigin = "anonymous";
@@ -202,7 +219,19 @@ img_terrain.onload = function() {
     },
     false
   );
-  generation = draw(ctx, generation, generationDate);
+  c.addEventListener(
+    "click",
+    function(evt) {
+      var mousePos = getMousePos(canvas, evt);
+      var width = canvas.getBoundingClientRect().width;
+      var height = canvas.getBoundingClientRect().height;
+      var x = (mousePos.x * 2161) / width;
+      var y = (mousePos.y * 1038) / height;
+      createCell(Math.floor(x), Math.floor(y));
+    },
+    false
+  );
+  draw(ctx, generation, generationDate);
 };
 img_density.onload = function() {
   ctx_density.drawImage(img_density, 0, 0);
