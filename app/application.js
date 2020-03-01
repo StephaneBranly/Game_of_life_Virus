@@ -154,6 +154,17 @@ function getMousePos(canvas, evt) {
   };
 }
 
+function getCanvasCoord(canvas, evt, mousePos) {
+  var width = canvas.getBoundingClientRect().width;
+  var height = canvas.getBoundingClientRect().height;
+  var x = (mousePos.x * 2161) / width;
+  var y = (mousePos.y * 1038) / height;
+  return {
+    x: Math.floor(x),
+    y: Math.floor(y)
+  };
+}
+
 function stop_game() {
   play = false;
 }
@@ -175,15 +186,15 @@ var play = false;
 function createCell(x, y) {
   generation[y][x] = 1;
   generation[y][x + 1] = 1;
-  generation[y][x + 2] = 1;
+  generation[y][x - 1] = 1;
 
   generation[y + 1][x] = 1;
   generation[y + 1][x + 1] = 1;
-  generation[y + 1][x + 2] = 1;
+  generation[y + 1][x - 1] = 1;
 
-  generation[y + 2][x] = 1;
-  generation[y + 2][x + 1] = 1;
-  generation[y + 2][x + 2] = 1;
+  generation[y - 1][x] = 1;
+  generation[y - 1][x + 1] = 1;
+  generation[y - 1][x - 1] = 1;
   draw(ctx, generation, generationDate);
 }
 var generationDate = 20200229;
@@ -214,8 +225,13 @@ img_terrain.onload = function() {
     "mousemove",
     function(evt) {
       var mousePos = getMousePos(canvas, evt);
+      var canvasPos = getCanvasCoord(canvas, evt, mousePos);
       document.getElementById("x_coord").innerHTML = Math.floor(mousePos.x);
       document.getElementById("y_coord").innerHTML = Math.floor(mousePos.y);
+      document.getElementById("x_coord_canvas").innerHTML = canvasPos.x;
+      document.getElementById("y_coord_canvas").innerHTML = canvasPos.y;
+      document.getElementById("cell_state").innerHTML =
+        generation[canvasPos.y][canvasPos.x];
     },
     false
   );
@@ -223,11 +239,8 @@ img_terrain.onload = function() {
     "click",
     function(evt) {
       var mousePos = getMousePos(canvas, evt);
-      var width = canvas.getBoundingClientRect().width;
-      var height = canvas.getBoundingClientRect().height;
-      var x = (mousePos.x * 2161) / width;
-      var y = (mousePos.y * 1038) / height;
-      createCell(Math.floor(x), Math.floor(y));
+      var canvasPos = getCanvasCoord(canvas, evt, mousePos);
+      createCell(canvasPos.x, canvasPos.y);
     },
     false
   );
