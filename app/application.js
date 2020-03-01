@@ -16,25 +16,27 @@ function createGeneration(width, height) {
       }
     }
   }
-  /* generation[301][947] = 1;
-  generation[300][947] = 1;
-  generation[302][947] = 1;
-  generation[298][947] = 1;
-  generation[298][945] = 1;
-  generation[300][945] = 1;
-  generation[302][945] = 1;
-  generation[300][944] = 1;
-  generation[300][943] = 1;
-*/
   return generation;
 }
 
 function calculatePlanisphere() {
   var planisphere = new Array();
-  var canvas_terrain = document.getElementById("canvas_terrain");
-  var ctx_terrain = canvas_terrain.getContext("2d");
   planisphere = ctx_terrain.getImageData(0, 0, 2161, 1038).data;
   return planisphere;
+}
+
+function calculateDensity(width, height) {
+  var density = new Array();
+  var density_return = new Array(height);
+  density = ctx_density.getImageData(0, 0, 2161, 1038).data;
+  for (var y = 0; y < height; y++) {
+    density_return[y] = [];
+    for (var x = 0; x < width; x++) {
+      density_return[y][x] =
+        (density[(x + y * 2161) * 4 + 1] + density[(x + y * 2161) * 4 + 2]) / 2;
+    }
+  }
+  return density_return;
 }
 
 function draw(context2d, generation, generationD) {
@@ -61,11 +63,14 @@ function drawCells(context2d, generation, width, height, scale) {
     for (var x = 0; x < width; x++) {
       switch (generation[y][x]) {
         case 0:
-          context2d.fillStyle = "rgb(10, 230, 30)";
+          //context2d.fillStyle = "rgb(10, 230, 30)";
+          color = "rgb(0," + density[y][x] + "," + density[y][x] / 3 + ")";
+          context2d.fillStyle = color;
           context2d.fillRect(x * scale, y * scale, scale, scale);
           break;
         case 1:
-          context2d.fillStyle = "red";
+          color = "rgb(255," + "15" + ",30)";
+          context2d.fillStyle = color;
           context2d.fillRect(x * scale, y * scale, scale, scale);
           break;
         default:
@@ -184,7 +189,9 @@ function change_color() {
   color =
     "rgb(" +
     document.getElementById("state_color_contamination").value +
-    ",0," +
+    "," +
+    document.getElementById("state_color_density").value +
+    "," +
     document.getElementById("state_color_dead").value +
     ")";
   document.getElementById("state_color_visu").style.background = color;
@@ -226,21 +233,23 @@ var ctx_density = canvas_density.getContext("2d");
 var c = document.getElementById("canvas");
 var ctx = c.getContext("2d");
 var generation;
+var density;
 
 img_terrain.onload = function() {
   ctx_terrain.drawImage(img_terrain, 0, 0);
   generation = createGeneration(2161, 1038);
+
   c.addEventListener(
     "mousemove",
     function(evt) {
       var mousePos = getMousePos(canvas, evt);
       var canvasPos = getCanvasCoord(canvas, evt, mousePos);
-      document.getElementById("x_coord").innerHTML = Math.floor(mousePos.x);
-      document.getElementById("y_coord").innerHTML = Math.floor(mousePos.y);
       document.getElementById("x_coord_canvas").innerHTML = canvasPos.x;
       document.getElementById("y_coord_canvas").innerHTML = canvasPos.y;
       document.getElementById("cell_state").innerHTML =
         generation[canvasPos.y][canvasPos.x];
+      document.getElementById("cell_density").innerHTML =
+        density[canvasPos.y][canvasPos.x];
     },
     false
   );
@@ -253,8 +262,9 @@ img_terrain.onload = function() {
     },
     false
   );
-  draw(ctx, generation, generationDate);
 };
 img_density.onload = function() {
   ctx_density.drawImage(img_density, 0, 0);
+  density = calculateDensity(2161, 1038);
+  draw(ctx, generation, generationDate);
 };
