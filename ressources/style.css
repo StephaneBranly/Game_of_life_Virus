@@ -1,22 +1,26 @@
 body {
+  font-family: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande",
+    "Lucida Sans", Arial, sans-serif;
   text-align: center;
   background-color: rgb(235, 235, 235);
-  color: rgb(104, 0, 95);
+  text-shadow: 1px 1px 3px rgb(141, 141, 141);
 }
 
 div {
-  border: 2px solid rgb(104, 0, 95);
-  margin: 10px;
-  color: white;
+  margin-top: 20px;
+  color: black;
   padding: 10px;
-  background-color: rgba(0, 0, 0, 0.8);
+  background-color: rgb(207, 207, 207);
+  box-shadow: 5px 5px 10px rgb(141, 141, 141);
+  border-radius: 10px;
 }
 
 div p {
   border: 2px solid white;
 }
 canvas {
-  border: 3px solid black;
+  border: 1px solid black;
+  border-radius: 5px;
 }
 
 #canvas_terrain,
