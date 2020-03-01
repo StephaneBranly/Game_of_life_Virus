@@ -48,7 +48,7 @@ function draw(context2d, generation, generationD) {
   clearBackground(context2d, width, height, scale);
   drawCells(context2d, generation, width, height, scale);
   generationDate = generationD;
-  if (play == true) setTimeout(update, 50, context2d, generation, generationD);
+  if (play == true) setTimeout(update, 500, context2d, generation, generationD);
   return generation;
 }
 
@@ -71,17 +71,17 @@ function drawCells(context2d, generation, width, height, scale) {
         case -1:
           break;
         case 100:
-          color = "rgb(0," + "15" + ",255)";
+          color = "rgb(240,0,250)";
           context2d.fillStyle = color;
           context2d.fillRect(x * scale, y * scale, scale, scale);
           break;
         case 666:
-          color = "rgb(255,255,255)";
+          color = "rgb(255,90,30)";
           context2d.fillStyle = color;
           context2d.fillRect(x * scale, y * scale, scale, scale);
           break;
         default:
-          color = "rgb(255," + "15" + ",30)";
+          color = "rgb(255,240,70)";
           context2d.fillStyle = color;
           context2d.fillRect(x * scale, y * scale, scale, scale);
           break;
@@ -92,7 +92,7 @@ function drawCells(context2d, generation, width, height, scale) {
 
 function nextCellState(neighborhood, x, y) {
   var somme = 0;
-  for (var i = 0; i < 9; i++) {
+  for (var i = 0; i < neighborhood.length; i++) {
     if (neighborhood[i] != 666 && neighborhood[i] != -1 && neighborhood[i] != 0)
       somme += 1;
   }
@@ -177,7 +177,7 @@ function update(ctx, generation, generationDate) {
     }
   }
 
-  setTimeout(draw, 50, ctx, nextGeneration, generationDate - 1);
+  setTimeout(draw, 500, ctx, nextGeneration, generationDate - 1);
 }
 
 function getMousePos(canvas, evt) {
